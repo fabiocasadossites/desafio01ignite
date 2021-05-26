@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Image,
   Platform,
   StyleSheet,
@@ -7,15 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import checkIcon from "../assets/icons/Check.png";
-import colors from "../constants/colors";
 
 interface TodoInputProps {
   addTask: (task: string) => void;
+  mode: boolean;
 }
 
-export function TodoInput({ addTask }: TodoInputProps) {
-  const [task, setTask] = useState<string>("");
+export function TodoInput({ addTask, mode }: TodoInputProps) {
+  const [task, setTask] = useState("");
 
   function handleAddNewTask() {
     addTask(task);
@@ -32,16 +34,34 @@ export function TodoInput({ addTask }: TodoInputProps) {
       ]}
     >
       <TextInput
-        style={styles.input}
+        style={
+          mode === false
+            ? styles.input
+            : [
+                styles.input,
+                {
+                  backgroundColor: "#303030",
+                  color: "#E1E1E6",
+                  borderWidth: 1,
+                  borderBottomColor: "#181818",
+                },
+              ]
+        }
         placeholder="Adicionar novo todo..."
+        placeholderTextColor={mode === false ? "#A09CB1" : "#E1E1E6"}
         returnKeyType="send"
         onChangeText={setTask}
+        onSubmitEditing={handleAddNewTask}
         value={task}
       />
       <TouchableOpacity
         testID="add-new-task-button"
         activeOpacity={0.7}
-        style={styles.addButton}
+        style={
+          mode === false
+            ? styles.addButton
+            : [styles.addButton, { backgroundColor: "#181818" }]
+        }
         onPress={handleAddNewTask}
       >
         <Image source={checkIcon} />
@@ -63,12 +83,13 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     backgroundColor: "#F5F4F8",
+    color: "#181818",
     paddingLeft: 12,
     borderTopLeftRadius: 5,
     borderBottomLeftRadius: 5,
   },
   inputIOSShadow: {
-    shadowColor: colors.black,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -80,7 +101,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   addButton: {
-    backgroundColor: colors.green,
+    backgroundColor: "#3FAD27",
     height: 50,
     paddingHorizontal: 16,
     justifyContent: "center",

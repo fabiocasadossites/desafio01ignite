@@ -1,18 +1,26 @@
 import React from "react";
 import {
   FlatList,
-  StyleSheet,
-  Text,
   TouchableOpacity,
   View,
+  Text,
+  StyleSheet,
 } from "react-native";
-import colors from "../constants/colors";
-import fonts from "../constants/fonts";
 
-function FlatListHeaderComponent() {
+interface MyFlatListProps {
+  mode: boolean;
+}
+
+function FlatListHeaderComponent({ mode }: MyFlatListProps) {
   return (
     <View>
-      <Text style={styles.header}>Minhas tasks</Text>
+      <Text
+        style={
+          mode === false ? styles.header : [styles.header, { color: "#BF4AD4" }]
+        }
+      >
+        Minhas tasks
+      </Text>
     </View>
   );
 }
@@ -25,9 +33,15 @@ interface MyTasksListProps {
   }[];
   onPress: (id: number) => void;
   onLongPress: (id: number) => void;
+  mode: boolean;
 }
 
-export function MyTasksList({ tasks, onLongPress, onPress }: MyTasksListProps) {
+export function MyTasksList({
+  tasks,
+  onLongPress,
+  onPress,
+  mode,
+}: MyTasksListProps) {
   return (
     <FlatList
       data={tasks}
@@ -39,24 +53,48 @@ export function MyTasksList({ tasks, onLongPress, onPress }: MyTasksListProps) {
             activeOpacity={0.7}
             onPress={() => onPress(item.id)}
             onLongPress={() => onLongPress(item.id)}
-            style={[item.done ? styles.taskButtonDone : styles.taskButton]}
-            //TODO - use onPress, onLongPress and style props
+            style={
+              mode === false
+                ? item.done === true
+                  ? styles.taskButtonDone
+                  : styles.taskButton
+                : item.done === true
+                ? [
+                    styles.taskButtonDone,
+                    { backgroundColor: "rgba(62, 62, 62, 0.1)" },
+                  ]
+                : styles.taskButton
+            }
           >
             <View
               testID={`marker-${index}`}
-              style={[item.done ? styles.taskMarkerDone : styles.taskMarker]}
-              //TODO - use style prop
+              style={
+                mode === false
+                  ? item.done === true
+                    ? styles.taskMarkerDone
+                    : styles.taskMarker
+                  : item.done === true
+                  ? [styles.taskMarkerDone, { backgroundColor: "#12a952" }]
+                  : [styles.taskMarker, { borderColor: "#12a952" }]
+              }
             />
             <Text
-              style={[item.done ? styles.taskTextDone : styles.taskText]}
-              //TODO - use style prop
+              style={
+                mode === false
+                  ? item.done === true
+                    ? styles.taskTextDone
+                    : styles.taskText
+                  : item.done === true
+                  ? [styles.taskTextDone, { color: "#E1E1E6" }]
+                  : [styles.taskText, { color: "#E1E1E6" }]
+              }
             >
               {item.title}
             </Text>
           </TouchableOpacity>
         );
       }}
-      ListHeaderComponent={<FlatListHeaderComponent />}
+      ListHeaderComponent={<FlatListHeaderComponent mode={mode} />}
       ListHeaderComponentStyle={{
         marginBottom: 20,
       }}
@@ -70,9 +108,9 @@ export function MyTasksList({ tasks, onLongPress, onPress }: MyTasksListProps) {
 
 const styles = StyleSheet.create({
   header: {
-    color: colors.gray,
+    color: "#3D3D4D",
     fontSize: 24,
-    fontFamily: fonts.bold,
+    fontFamily: "Poppins-SemiBold",
   },
   taskButton: {
     flex: 1,
@@ -88,11 +126,11 @@ const styles = StyleSheet.create({
     width: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.gray,
+    borderColor: "#3D3D4D",
     marginRight: 10,
   },
   taskText: {
-    color: colors.gray,
+    color: "#3D3D4D",
   },
   taskButtonDone: {
     flex: 1,
@@ -108,7 +146,7 @@ const styles = StyleSheet.create({
     height: 16,
     width: 16,
     borderRadius: 8,
-    backgroundColor: colors.blue,
+    backgroundColor: "#273FAD",
     marginRight: 10,
   },
   taskTextDone: {
